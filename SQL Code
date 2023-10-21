@@ -1,0 +1,245 @@
+
+-- View entire data sent
+
+SELECT * 
+FROM NYPD.hatecrimes
+
+-- Question 1: Which borough in NYC had the highest number of incidents in each of the 5 years? (2019, 2020, 2021, 2022, 2023)
+
+-- All 5 years
+
+WITH incidents AS (
+  SELECT
+    year,
+    borough,
+    COUNT(*) AS total_incidents,
+    ROW_NUMBER() OVER (PARTITION BY year ORDER BY COUNT(*) DESC) AS row_num
+  FROM
+    NYPD.hatecrimes
+  WHERE
+    year IN (2019, 2020, 2021, 2022, 2023)
+  GROUP BY
+    year, borough
+)
+SELECT
+  year,
+  borough,
+  total_incidents
+FROM
+  incidents
+WHERE
+  row_num = 1
+ORDER BY
+  year; 
+
+
+
+
+
+
+-- 2019
+
+SELECT borough, COUNT(*) AS total_incidents_2019
+FROM NYPD.hatecrimes 
+WHERE year = 2019
+GROUP BY borough
+ORDER BY total_incidents_2019 DESC
+LIMIT 1;
+
+-- 2020
+
+SELECT borough, COUNT(*) AS total_incidents_2020
+FROM NYPD.hatecrimes 
+WHERE year = 2020
+GROUP BY borough
+ORDER BY total_incidents_2020 DESC
+LIMIT 1;
+
+-- 2021
+
+SELECT borough, COUNT(*) AS total_incidents_2021
+FROM NYPD.hatecrimes 
+WHERE year = 2021
+GROUP BY borough
+ORDER BY total_incidents_2021 DESC
+LIMIT 1;
+
+--2022
+
+SELECT borough, COUNT(*) AS total_incidents_2022
+FROM NYPD.hatecrimes 
+WHERE year = 2022
+GROUP BY borough
+ORDER BY total_incidents_2022 DESC
+LIMIT 1;
+
+-- 2023 
+
+SELECT borough, COUNT(*) AS total_incidents_2019
+FROM NYPD.hatecrimes 
+WHERE year = 2023
+GROUP BY borough
+ORDER BY total_incidents_2019 DESC
+LIMIT 1;
+
+
+-- QUESTION 2: What is the most common month for incidents in NYC?
+
+SELECT month, COUNT(*) AS total_incidents
+FROM NYPD.hatecrimes
+GROUP BY month
+ORDER BY total_incidents DESC;
+
+
+-- QUESTION 3: What is the most common police description for incidents in the each borough?
+
+-- BRONX
+
+SELECT offense_description, COUNT(*) AS total_incidents_bronx
+FROM NYPD.hatecrimes
+WHERE borough = 'BRONX'
+GROUP BY offense_description
+ORDER BY total_incidents_bronx DESC;
+
+-- BROOKLYN
+
+SELECT offense_description, COUNT(*) AS total_incidents_brooklyn
+FROM NYPD.hatecrimes
+WHERE borough = 'BROOKLYN'
+GROUP BY offense_description
+ORDER BY total_incidents_brooklyn DESC;
+
+-- MANHATTEN
+
+SELECT offense_description, COUNT(*) AS total_incidents_manhatten
+FROM NYPD.hatecrimes
+WHERE borough = 'MANHATTEN'
+GROUP BY offense_description
+ORDER BY total_incidents_manhatten DESC;
+
+-- QUEENS
+
+SELECT offense_description, COUNT(*) AS total_incidents_queens
+FROM NYPD.hatecrimes
+WHERE borough = 'QUEENS'
+GROUP BY offense_description
+ORDER BY total_incidents_queens DESC;
+
+-- STATEN ISLAND 
+
+
+SELECT offense_description, COUNT(*) AS total_incidents_staten_island
+FROM NYPD.hatecrimes
+WHERE borough = 'STATEN ISLAND'
+GROUP BY offense_description
+ORDER BY total_incidents_staten_island DESC;
+
+
+-- QUESTION 4: What are the top bias motives in each borough?
+
+-- all boroughs
+
+WITH TopBiasMotives AS (
+  SELECT
+    borough,
+    bias_motive,
+    COUNT(*) AS total_incidents
+  FROM
+    NYPD.hatecrimes
+  GROUP BY
+    borough, bias_motive
+)
+SELECT
+  borough,
+  bias_motive,
+  total_incidents
+FROM (
+  SELECT
+    borough,
+    bias_motive,
+    total_incidents,
+    ROW_NUMBER() OVER (PARTITION BY borough ORDER BY total_incidents DESC) AS row_num
+  FROM
+    TopBiasMotives
+) AS T
+WHERE
+  T.row_num = 1
+ORDER BY
+  borough;
+
+
+-- MANHATTEN
+
+SELECT
+  bias_motive,
+  COUNT(*) AS manhatten_bias_incidents
+FROM
+  NYPD.hatecrimes 
+WHERE
+  borough = 'MANHATTEN'
+GROUP BY
+  bias_motive
+ORDER BY
+  manhatten_bias_incidents DESC
+LIMIT 1;
+
+-- BROOKLYN
+
+SELECT
+  bias_motive,
+  COUNT(*) AS brooklyn_bias_incidents
+FROM
+  NYPD.hatecrimes 
+WHERE
+  borough = 'BROOKLYN'
+GROUP BY
+  bias_motive
+ORDER BY
+  brooklyn_bias_incidents DESC
+LIMIT 1;
+
+-- BRONX
+
+SELECT
+  bias_motive,
+  COUNT(*) AS bronx_bias_incidents
+FROM
+  NYPD.hatecrimes 
+WHERE
+  borough = 'BRONX'
+GROUP BY
+  bias_motive
+ORDER BY
+  bronx_bias_incidents DESC
+LIMIT 1;
+
+-- QUEENS
+
+
+SELECT
+  bias_motive,
+  COUNT(*) AS queens_bias_incidents
+FROM
+  NYPD.hatecrimes 
+WHERE
+  borough = 'QUEENS'
+GROUP BY
+  bias_motive
+ORDER BY
+  queens_bias_incidents DESC
+LIMIT 1;
+
+-- STATEN ISLAND
+
+SELECT
+  bias_motive,
+  COUNT(*) AS staten_island_bias_incidents
+FROM
+  NYPD.hatecrimes 
+WHERE
+  borough = 'STATEN ISLAND'
+GROUP BY
+  bias_motive
+ORDER BY
+  staten_island_bias_incidents DESC
+LIMIT 1;
