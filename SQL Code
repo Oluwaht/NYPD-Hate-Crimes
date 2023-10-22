@@ -93,6 +93,15 @@ ORDER BY total_incidents DESC;
 
 -- QUESTION 3: What is the most common police description for incidents in the each borough?
 
+-- ALL 5 boroughs
+
+SELECT offense_description, COUNT(*) AS total_incidents
+FROM NYPD.hatecrimes
+GROUP BY offense_description
+ORDER BY total_incidents DESC
+LIMIT 1;
+
+
 -- BRONX
 
 SELECT offense_description, COUNT(*) AS total_incidents_bronx
@@ -135,9 +144,11 @@ GROUP BY offense_description
 ORDER BY total_incidents_staten_island DESC;
 
 
+
+
 -- QUESTION 4: What are the top bias motives in each borough?
 
--- all boroughs
+-- all 5 boroughs
 
 WITH TopBiasMotives AS (
   SELECT
@@ -165,7 +176,7 @@ FROM (
 WHERE
   T.row_num = 1
 ORDER BY
-  borough;
+  borough; 
 
 
 -- MANHATTEN
@@ -243,3 +254,89 @@ GROUP BY
 ORDER BY
   staten_island_bias_incidents DESC
 LIMIT 1;
+
+
+-- QUESTION 5 What is the top offfense-category in each borough?
+
+-- all boroughs
+
+WITH Top_offense AS (
+  SELECT
+    borough,
+    offense_category_8 AS offense,
+    COUNT(*) AS offense_count
+  FROM
+    NYPD.hatecrimes
+  GROUP BY
+    borough, offense
+)
+SELECT
+  borough,
+  offense,
+  offense_count
+FROM (
+  SELECT
+    borough,
+    offense,
+    offense_count,
+    ROW_NUMBER() OVER (PARTITION BY borough ORDER BY offense_count DESC) AS row_num
+  FROM
+    Top_offense
+) AS T
+WHERE
+  T.row_num = 1
+ORDER BY
+  offense_count DESC;
+
+-- QUESTION 6 What is the trend in the number of hate crime incidents in NYC from 2019 to 2023?
+
+SELECT
+  year AS year,
+  COUNT(*) AS total_incidents
+FROM
+  NYPD.hatecrimes
+WHERE
+  year BETWEEN 2019 AND 2023
+GROUP BY
+  year
+ORDER BY
+  year;
+
+
+-- QUESTION 7; How many cases still have no arrest dates?
+
+SELECT arrest_date AS no_arrest_date, COUNT(*) AS no_arrests_total
+FROM NYPD.hatecrimes
+WHERE arrest_date IS NULL 
+GROUP BY arrest_date;
+
+
+-- QUESTION 8: How many reports a year?
+
+SELECT
+  year AS year,
+  COUNT(*) AS report_count
+FROM
+  NYPD.hatecrimes
+WHERE
+  year BETWEEN 2019 AND 2023
+GROUP BY
+  year
+ORDER BY
+  year;
+
+-- Calculate the average number of reports per year
+
+SELECT
+  AVG(report_count) AS average_reports_per_year
+FROM (
+  SELECT
+    year,
+    COUNT(*) AS report_count
+  FROM
+    NYPD.hatecrimes
+  WHERE
+    year BETWEEN 2019 AND 2023
+  GROUP BY
+    year
+) AS subquery;
