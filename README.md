@@ -44,7 +44,7 @@ This data analytics project aims to provide insights into hate crime incidents i
 - **2020:** Brooklyn (273 incidents)
 - **2021:** Manhattan (360 incidents)
 - **2022:** Manhattan (390 incidents)
-- **2023 Partial:** Data not yet complete (166 incidents)
+- **2023 Queens:** Data not yet complete (166 incidents)
 
 ### 2. The Most Common Month for Hate Crime Incidents in NYC
 
