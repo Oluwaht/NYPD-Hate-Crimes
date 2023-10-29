@@ -33,10 +33,6 @@ ORDER BY
   year; 
 
 
-
-
-
-
 -- 2019
 
 SELECT borough, COUNT(*) AS total_incidents_2019
@@ -99,7 +95,7 @@ SELECT offense_description, COUNT(*) AS total_incidents
 FROM NYPD.hatecrimes
 GROUP BY offense_description
 ORDER BY total_incidents DESC
-LIMIT 1;
+LIMIT 5;
 
 
 -- BRONX
@@ -340,3 +336,7 @@ FROM (
   GROUP BY
     year
 ) AS subquery;
+
+-- If needed for visualization
+SELECT longitude, latitude, borough
+FROM NYPD.hatecrimes
